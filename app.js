@@ -1,30 +1,17 @@
 var express = require('express'),
     bodyparser = require('body-parser'),
     app = express(),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    Post = require("./models/post"),
+    Comment = require("./models/comment"),
+    seedDB = require("./seeds");
 
 mongoose.connect('mongodb://localhost/gear_talk');
 app.use(bodyparser.urlencoded({extended: true}))
-app.set("view engine", "ejs");   
+app.set("view engine", "ejs"); 
+app.use(express.static(__dirname + '/public'));
 
-var postSchema = new mongoose.Schema({
-    title: String,
-    image: String,
-    description: String
-});
-
-var Post = mongoose.model("Post", postSchema);
-//     Post.create({
-//         title:"tr909-another one added", 
-//         image:"http://www.6am-group.com/wp-content/uploads/2015/09/Roland-909.jpg",
-//         description:"This is a great machine.  Classic sounds."
-//     }, function (err, post){
-//         if (err){
-//             console.log(err)
-//         } else {
-//             console.log(post);
-//         }
-//     });
+seedDB();
 
 app.get("/", function(req, res){
     res.render("landing");
@@ -37,7 +24,7 @@ app.get("/posts", function(req, res){
         if (err){
             console.log(err);
         } else {
-            res.render("index", {posts:Posts});     
+            res.render("posts/index", {posts:Posts});     
         }
     })
 });
@@ -58,20 +45,64 @@ app.post("/posts", function(req, res){
 });
 //NEW Route
 app.get("/posts/new", function(req, res){
-    res.render("new.ejs")
+    res.render("posts/new")
 })
 
 //Show template
 app.get("/posts/:id", function(req, res){
     //get post from db
-    Post.findById(req.params.id, function(err, post){
+    Post.findById(req.params.id).populate("comments").exec(function(err, post){
         if (err){
             console.log(err)
         } else {
+            console.log(post)
             //show template with specific campground
-            res.render("show", {post: post});
+            res.render("posts/show", {post: post});
         }
     });
+});
+
+
+
+// ==================
+// COMMENTS ROUTES
+// ==================
+
+app.get("/posts/:id/comments/new", function(req, res){
+    Post.findById(req.params.id, function(err, post){
+        if (err){
+            console.log(err);
+        } else {
+            res.render("comments/new", {post: post});
+        }
+    })
+})
+
+app.post("/posts/:id/comments", function(req, res){
+    //lookup post by id
+    Post.findById(req.params.id, function(err, post) {
+        if (err) {
+            console.log(err);
+            res.redirect("/posts");
+        } else {
+            //create comment
+            Comment.create(req.body.comment, function(err, comment){
+                if (err) {
+                    console.log(err)
+                } else {
+                    post.comments.push(comment);
+                    post.save();
+                    res.redirect("/posts/" + post._id);
+                }
+            })
+            
+        }
+    })
+    
+
+    
+    
+    
 });
 
     

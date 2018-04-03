@@ -1,0 +1,50 @@
+<% include ../partials/header %>
+
+  <section class="hero">
+    <div class="background-image" style="background-image: url(/images/anton-ponomarev-206484-unsplash.jpg);"></div>
+    <div class="hero-content-area">
+      <h1>GearTalk</h1>
+      <h3>Eventually a slogan</h3>
+      <a href="posts/new" class="btn">Create post</a>
+    </div>
+  </section>
+
+
+<a href="posts/new">add new post</a>
+
+<div class="ui grid cards">
+    <% posts.forEach(function(post){ %>
+        <div class="four wide column">
+            <div class="ui card">
+                <div class="image">
+                    <!--<img src="<%= post.image%>">-->
+                    <div class="post-image" style="background-image: url(<%= post.image%>);"></div>
+                </div>
+                    <div class="content">
+                        <div class="header"><%= post.title %></div>
+                        <div class="meta">
+                            Post
+                        </div>
+                        <div class="description">
+                            <p>This is a brief description of the post.</p>
+                            <a href="/posts/<%= post._id %>" class="btn">Read More</a>
+                        </div>
+                        <div class="extra content">
+                          <span>
+                            <i class="user icon"></i>
+                          </span>
+                           <span class="right floated">
+                            User
+                          </span>
+                        </div>                        
+                    </div>
+                </div>
+            </div>
+    <% }); %>
+</div>
+
+
+
+
+
+<% include ../partials/footer %>
