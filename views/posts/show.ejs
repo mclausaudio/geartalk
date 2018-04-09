@@ -1,6 +1,7 @@
 <% include ../partials/header %>
 
 <h1><%=post.title%></h1>
+<p>Posted by: <%= post.author.username %></p>
 
 <img src="<%=post.image%>">
 
@@ -10,7 +11,7 @@
 
 <% post.comments.forEach(function(comment){ %>
 
-    <p><strong><%= comment.author %></strong> - <%= comment.text %></p>
+    <p><strong><%= comment.author.username %></strong> - <%= comment.text %></p>
     
 <% }); %>
 

@@ -42,9 +42,17 @@ router.post("/login", passport.authenticate("local", {
 // //////////////
 // Logout
 // //////////////
-router.get("/logout", function(req, res){
+router.get("/logout", isLoggedIn, function(req, res){
     req.logout();
     res.redirect("/posts");
 });
+
+function isLoggedIn(req, res, next){
+    if (req.isAuthenticated()) {
+        return next();
+    } else {
+        res.redirect("/login");
+    }
+};
 
 module.exports = router;

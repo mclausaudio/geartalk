@@ -26,29 +26,29 @@ var mongoose = require("mongoose"),
             console.log(err);
         } else {
             console.log("Cleared database");
-            data.forEach(function(seed){
-                Post.create(seed, function(err, seedPost){
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log("Seed post added");
-                        Comment.create(
-                            {
-                                text: "This is a great piece of equipment",
-                                author:"Synth God"
+            // data.forEach(function(seed){
+            //     Post.create(seed, function(err, seedPost){
+            //         if (err) {
+            //             console.log(err);
+            //         } else {
+            //             console.log("Seed post added");
+            //             Comment.create(
+            //                 {
+            //                     text: "This is a great piece of equipment",
+            //                     author:"Synth God"
                                 
-                            }, function(err, comment){
-                                if (err){
-                                    console.log(err)
-                                } else {
-                                    seedPost.comments.push(comment);
-                                    seedPost.save();
-                                    console.log("created new comment");
-                                }
-                            });
-                    }
-                });
-            });
+            //                 }, function(err, comment){
+            //                     if (err){
+            //                         console.log(err)
+            //                     } else {
+            //                         seedPost.comments.push(comment);
+            //                         seedPost.save();
+            //                         console.log("created new comment");
+            //                     }
+            //                 });
+            //         }
+            //     });
+            // });
         }
     });
 };

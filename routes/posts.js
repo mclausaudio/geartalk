@@ -18,22 +18,27 @@ router.get("/", function(req, res){
     })
 });
 // CREATE PATH
-router.post("/", function(req, res){
+router.post("/", isLoggedIn, function(req, res){
     var title = req.body.title;
     var image = req.body.image;
     var description = req.body.description;
-    var newPost = {title: title, image: image, description: description};
+    var author = {
+        id: req.user._id,
+        username: req.user.username
+    }
+    var newPost = {title: title, image: image, description: description, author: author};
     Post.create(newPost, function(err, newlyCreated){
         if (err) {
             console.log(err)
         } else {
+            console.log(newlyCreated);
             //re direct to posts
             res.redirect("/posts");
         }
     })
 });
 //NEW Route
-router.get("/new", function(req, res){
+router.get("/new", isLoggedIn, function(req, res){
     res.render("posts/new")
 })
 
@@ -44,12 +49,19 @@ router.get("/:id", function(req, res){
         if (err){
             console.log(err)
         } else {
-            console.log(post)
             //show template with specific campground
             res.render("posts/show", {post: post});
         }
     });
 });
+
+function isLoggedIn(req, res, next){
+    if (req.isAuthenticated()) {
+        return next();
+    } else {
+        res.redirect("/login");
+    }
+};
 
 module.exports = router;
 
