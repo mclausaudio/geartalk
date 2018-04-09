@@ -32,14 +32,15 @@ body {
 }
 /*HEADER SECTION*/
 header {
-    position:absolute;
+    position:fixed;
     width:100%;
     display:flex;
     justify-content: space-between;
     align-items:center;
-    padding: 35px 100px 0;
+    padding: 20px 100px 0;
     animation:1s fadein 0.5s forwards;
     opacity:0;
+    z-index: 10;
 }
 
 @keyframes fadein {
@@ -48,6 +49,29 @@ header {
     }
 }
 
+header h2 {
+    font-family: "Quicksand", sans-serif;
+}
+
+header nav {
+    display:flex;
+    margin-right: -15px;
+}
+
+header nav li {
+    margin: 0 15px;
+}
+
+@media (max-width: 800px) {
+    header {
+        padding: 20px 50px;
+        flex-direction: column;
+    }
+    
+    header h2 {
+        margin-bottom: 15px;
+    }
+}
 
 
 /*Hero Styling*/

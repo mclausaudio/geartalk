@@ -9,8 +9,15 @@
         <header>
             <h2>GearTalk</h2>
             <nav>
+                
                 <li><a href="/posts">Home</a></li>
-                <li><a href="posts/new">New Post</a></li>
-                <li><a href="posts/new">New Post</a></li>
+                <% if (!currentUser){ %>
+                    <li><a href="/login">Login</a></li>
+                    <li><a href="/register">Register</li>
+                <% } else { %>
+                    <li><a href="#">Signed in as <%= currentUser.username %></a></li>
+                    <li><a href="posts/new">New Post</a></li>
+                    <li><a href="/logout">Logout</a></li>
+                <% } %>
             </nav>
         </header>
