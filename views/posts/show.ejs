@@ -1,6 +1,7 @@
 <% include ../partials/header %>
 
-<h1><%=post.title%></h1>
+<section class="Show">
+    <h1><%=post.title%></h1>
 <p>Posted by: <%= post.author.username %></p>
 
 <img src="<%=post.image%>">
@@ -14,5 +15,7 @@
     <p><strong><%= comment.author.username %></strong> - <%= comment.text %></p>
     
 <% }); %>
+
+</section>
 
 <% include ../partials/footer %>

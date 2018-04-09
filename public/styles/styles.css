@@ -20,6 +20,10 @@ a {
     color:#fff;
 }
 
+a:hover {
+    text-decoration: none;
+}
+
 section {
     display:flex;
     flex-direction: column;
@@ -32,12 +36,12 @@ body {
 }
 /*HEADER SECTION*/
 header {
-    position:fixed;
+    position:absolute;
     width:100%;
     display:flex;
     justify-content: space-between;
     align-items:center;
-    padding: 20px 100px 0;
+    padding: 10px 100px 0;
     animation:1s fadein 0.5s forwards;
     opacity:0;
     z-index: 10;
