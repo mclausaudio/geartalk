@@ -1,13 +1,14 @@
 var express = require('express'),
     router = express.Router({mergeParams: true});
 var Post = require("../models/post"),
-    Comment = require("../models/comment");
+    Comment = require("../models/comment"),
+    middleware = require("../middleware");
 
 // ==================
 // COMMENTS ROUTES
 // ==================
-
-router.get("/new", isLoggedIn, function(req, res){
+// NEW view
+router.get("/new", middleware.isLoggedIn, function(req, res){
     Post.findById(req.params.id, function(err, post){
         if (err){
             console.log(err);
@@ -16,8 +17,8 @@ router.get("/new", isLoggedIn, function(req, res){
         }
     })
 })
-
-router.post("/", isLoggedIn, function(req, res){
+//POST/CREATE ROUTE
+router.post("/", middleware.isLoggedIn, function(req, res){
     //lookup post by id
     Post.findById(req.params.id, function(err, post) {
         if (err) {
@@ -46,13 +47,39 @@ router.post("/", isLoggedIn, function(req, res){
     });
 });
 
-function isLoggedIn(req, res, next){
-    if (req.isAuthenticated()) {
-        return next();
-    } else {
-        res.redirect("/login");
-    }
-};
+//EDIT
+
+router.get("/:comment_id/edit", middleware.checkCommentOwnership,function (req, res){
+    Comment.findById(req.params.comment_id,function(err, foundComment){
+        if (err) {
+            res.redirect("back");
+        } else {
+            res.render("comments/edit", {post_id: req.params.id, comment: foundComment});        
+        }
+    });
+});
+
+//UPDATE
+router.put("/:comment_id", middleware.checkCommentOwnership, function(req, res){
+    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
+        if (err) {
+            res.redirect("back");
+        } else {
+            res.redirect("/posts/" + req.params.id);
+        }
+    });
+});
+
+//COMMENT DESTROY
+router.delete("/:comment_id", middleware.checkCommentOwnership, function(req, res){
+    //find by id and remove
+    Comment.findByIdAndRemove(req.params.comment_id, function(err){
+        if (err){
+            res.redirect("back");
+        }
+        res.redirect("/posts/" + req.params.id);
+    });
+})
 
 module.exports = router;
 

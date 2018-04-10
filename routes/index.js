@@ -1,7 +1,8 @@
 var express = require('express'),
     router = express.Router({mergeParams: true});
 var User = require("../models/user"),
-    passport = require("passport");
+    passport = require("passport"),
+    middleware = require("../middleware");
     
 router.get("/", function(req, res){
     res.redirect("/posts");
@@ -42,17 +43,9 @@ router.post("/login", passport.authenticate("local", {
 // //////////////
 // Logout
 // //////////////
-router.get("/logout", isLoggedIn, function(req, res){
+router.get("/logout", middleware.isLoggedIn, function(req, res){
     req.logout();
     res.redirect("/posts");
 });
-
-function isLoggedIn(req, res, next){
-    if (req.isAuthenticated()) {
-        return next();
-    } else {
-        res.redirect("/login");
-    }
-};
 
 module.exports = router;

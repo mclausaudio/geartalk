@@ -3,7 +3,8 @@ var express = require('express'),
 var Post = require("../models/post"),
     Comment = require("../models/comment"),
     User = require("../models/user"),
-    passport = require("passport");
+    passport = require("passport"),
+    middleware = require("../middleware");  //if point to directory and do not specify file, node automatically grabs index.js
     
 //INDEX Route
 router.get("/", function(req, res){
@@ -18,7 +19,7 @@ router.get("/", function(req, res){
     })
 });
 // CREATE PATH
-router.post("/", isLoggedIn, function(req, res){
+router.post("/", middleware.isLoggedIn, function(req, res){
     var title = req.body.title;
     var image = req.body.image;
     var description = req.body.description;
@@ -38,7 +39,7 @@ router.post("/", isLoggedIn, function(req, res){
     })
 });
 //NEW Route
-router.get("/new", isLoggedIn, function(req, res){
+router.get("/new", middleware.isLoggedIn, function(req, res){
     res.render("posts/new")
 })
 
@@ -56,17 +57,19 @@ router.get("/:id", function(req, res){
 });
 
 //EDIT Route
-router.get("/:id/edit", function(req, res){
-    Post.findById(req.params.id, function(err, foundPost){
-        if (err) {
-            res.redirect("/posts");
-        } else {
-                res.render("posts/edit", {post: foundPost});
-        }
+router.get("/:id/edit", middleware.checkPostOwnership, function(req, res){
+    //we should not get any errors at this point because the middleware i wrote.
+    // at this point, confirmed it is the post's owner
+        Post.findById(req.params.id, function(err, foundPost){
+            if (err) {
+                res.redirect("back");
+            } else {
+                res. render("posts/edit", {post: foundPost});         
+            }
+        });        
     });
-});
 // UPDATE Route
-router.put("/:id", function(req, res){
+router.put("/:id", middleware.checkPostOwnership, function(req, res){
     //find and updated post
     Post.findByIdAndUpdate(req.params.id, req.body.post, function(err, updatedPost){
         console.log(req.params.id + " " + req.body.post);
@@ -81,7 +84,7 @@ router.put("/:id", function(req, res){
 });
 
 //DESTROY / DELETE POST ROUTE
-router.delete("/:id", function(req, res){
+router.delete("/:id", middleware.checkPostOwnership, function(req, res){
     Post.findByIdAndRemove(req.params.id, function(err){
         if (err) {
             res.redirect("/posts");
@@ -90,13 +93,5 @@ router.delete("/:id", function(req, res){
         }
     })
 });
-
-function isLoggedIn(req, res, next){
-    if (req.isAuthenticated()) {
-        return next();
-    } else {
-        res.redirect("/login");
-    }
-};
 
 module.exports = router;

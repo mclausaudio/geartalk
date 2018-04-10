@@ -5,11 +5,14 @@
 <p>Posted by: <%= post.author.username %></p>
 
 <img src="<%=post.image%>">
+<!-- JS below - if there is even a current user, AND that user has the same id, then load those button-->
+<% if (currentUser && post.author.id.equals(currentUser._id)) { %>
+    <a href="/posts/<%= post._id %>/edit">Edit</a>
+    <form action="/posts/<%= post._id %>?_method=DELETE" method="POST">
+        <button>Delete</button>
+    </form>
+<% } else %>
 
-<a href="/posts/<%= post._id %>/edit">Edit</a>
-<form action="/posts/<%= post._id %>?_method=DELETE" method="POST">
-    <button>Delete</button>
-</form>
 <p><%=post.description%></p>
 
 
@@ -19,6 +22,13 @@
 
     <p><strong><%= comment.author.username %></strong> - <%= comment.text %></p>
     
+    
+    <% if (currentUser && comment.author.id.equals(currentUser._id)) { %>
+    <a href="/posts/<%= post._id %>/comments/<%= comment._id %>/edit" class="btn">Edit</a>
+    <form action="/posts/<%= post._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
+        <button class="btn">Delete</button>
+    </form>
+    <% }; %>
 <% }); %>
 
 </section>
