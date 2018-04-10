@@ -55,6 +55,42 @@ router.get("/:id", function(req, res){
     });
 });
 
+//EDIT Route
+router.get("/:id/edit", function(req, res){
+    Post.findById(req.params.id, function(err, foundPost){
+        if (err) {
+            res.redirect("/posts");
+        } else {
+                res.render("posts/edit", {post: foundPost});
+        }
+    });
+});
+// UPDATE Route
+router.put("/:id", function(req, res){
+    //find and updated post
+    Post.findByIdAndUpdate(req.params.id, req.body.post, function(err, updatedPost){
+        console.log(req.params.id + " " + req.body.post);
+        if (err) {
+            console.log(err);
+            res.redirect("/posts");
+        } else {
+            //redirect to post
+            res.redirect("/posts/" + req.params.id);
+        }
+    });
+});
+
+//DESTROY / DELETE POST ROUTE
+router.delete("/:id", function(req, res){
+    Post.findByIdAndRemove(req.params.id, function(err){
+        if (err) {
+            res.redirect("/posts");
+        } else {
+            res.redirect("/posts");
+        }
+    })
+});
+
 function isLoggedIn(req, res, next){
     if (req.isAuthenticated()) {
         return next();
@@ -64,4 +100,3 @@ function isLoggedIn(req, res, next){
 };
 
 module.exports = router;
-
